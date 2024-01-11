@@ -1,0 +1,22 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+  <!-- Add a button to redirect to /forms/create at the top -->
+  <a href="/forms/create">
+    <button>Create Message</button>
+  </a>
+  
+  <h2>Message List</h2>
+  <hr>
+  {% for Message in Messages %}
+    <p><b>pseudo:</b> {{ Message.pseudo }}</p>
+    <p><b>content:</b> {{ Message.content }}</p>
+    <p><b>likes:</b> {{ Message.likes }}</p>
+    <!-- Add more attributes as needed -->
+    <a href="/forms/update/{{ Message.id }}">Update</a>
+    <a href="/forms/delete/{{ Message.id }}">Delete</a>
+    <a href="/forms/like/{{ Message.id }}">Like</a>
+    <hr>
+  {% endfor %}
+  
+{% endblock %}

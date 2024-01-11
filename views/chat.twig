@@ -1,0 +1,77 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+  <h1>{{title}}</h1>
+  <p>Welcome to {{title}} </p>
+  <div>
+    <input type="text" id="pseudo" placeholder="Your Name">
+    <input type="text" id="content" placeholder="Message">
+    <button onclick="sendMsg()">Send</button>
+    <div id="typing-message"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      // Function to send messages
+      function sendMsg() {
+        var pseudo = document.getElementById("pseudo").value;
+        var content = document.getElementById("content").value;
+        var message = pseudo + ": " + content;
+        socket.emit("send-msg", message);
+      }
+
+      // Event listeners for receiving messages, connect/disconnect events, and typing indicators
+      socket.on("msg", (data) => {
+        var p = document.createElement('p');
+        p.innerHTML = data;
+        document.body.append(p);
+      });
+
+      socket.on("msg-typing", (typingPseudo) => {
+        var typingDiv = document.getElementById('typing-message');
+        if (!typingDiv) {
+          typingDiv = document.createElement('div');
+          typingDiv.id = 'typing-message';
+          document.body.append(typingDiv);
+        }
+        typingDiv.innerHTML = typingPseudo + ' is typing...';
+      });
+
+      socket.on("msg-stop-typing", () => {
+        var typingDiv = document.getElementById('typing-message');
+        if (typingDiv) {
+          typingDiv.innerHTML = '';
+        }
+      });
+
+      socket.on("connect", () => {
+        var connectionP = document.createElement('p');
+        connectionP.innerHTML = "Connected to the server!";
+        document.body.append(connectionP);
+      });
+
+      socket.on("disconnect", () => {
+        var disconnectionP = document.createElement('p');
+        disconnectionP.innerHTML = "Disconnected from the server!";
+        document.body.append(disconnectionP);
+      });
+
+
+
+
+
+
+
+      // Event listener to detect typing and emit "uTyping" event with the pseudonym
+      var typingTimer;
+      document.getElementById("content").addEventListener("input", function() {
+        var pseudo = document.getElementById("pseudo").value;
+        clearTimeout(typingTimer);
+        socket.emit("uTyping", pseudo); // Send the pseudonym when typing
+        typingTimer = setTimeout(function() {
+          socket.emit("stopTyping");
+        }, 1000);
+      });
+    </script>
+  </div>
+{% endblock %}

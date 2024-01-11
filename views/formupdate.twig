@@ -1,0 +1,17 @@
+{% extends 'layout.twig' %}  
+
+{% block body %}
+  <h1>{{ title }}</h1>
+  <p>Welcome to {{ title }}</p>
+  <div>
+    <form action="/forms/update/{{ Message.id }}" method="POST">
+      <label for="pseudo">pseudo:</label>
+      <input type="text" id="pseudo" name="pseudo" placeholder="Update pseudo" value="{{ Message.pseudo }}" required/>
+      
+      <label for="content">content:</label>
+      <input type="text" id="content" name="content" placeholder="Update content" value="{{ Message.content }}" required/>
+      
+      <input type="submit" value="Save" />
+    </form>
+  </div>
+{% endblock %}
